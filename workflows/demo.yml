@@ -1,0 +1,36 @@
+name: CI-CD Demo Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  # Job 1: Build (Continuous Integration)
+  build:
+    name: 'CI: Build & Test'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Compile Source
+        run: |
+          echo "Installing dependencies..."
+          echo "Compiling code..."
+
+      - name: Run Tests
+        run: |
+          echo "Running Unit Tests..."
+          echo "Test results: 100% pass"
+
+  # Job 2: Deploy (Continuous Deployment)
+  deploy:
+    name: 'CD: Deploy to Staging'
+    runs-on: ubuntu-latest
+    needs: build # This ensures Deploy only runs if Build passes
+    steps:
+      - name: Deploy Step
+        run: |
+          echo "Connecting to web server..."
+          echo "Transferring artifacts..."
+          echo "Deployment successful!"
