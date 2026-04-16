@@ -1,41 +1,36 @@
-name: Student CI-CD Demo
+# This is the correct syntax for Azure DevOps Pipelines
+trigger:
+- main
 
-# This triggers the pipeline automatically whenever you change the code
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch: # This adds a manual "Run" button in the GitHub UI
+pool:
+  vmImage: 'ubuntu-latest'
 
-jobs:
-  # PHASE 1: Continuous Integration (The "Check")
-  Build-and-Test:
-    runs-on: ubuntu-latest
+stages:
+- stage: BuildStage
+  displayName: 'Phase 1: Continuous Integration'
+  jobs:
+  - job: BuildJob
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+    - script: |
+        echo "🔨 Starting Build Process..."
+        echo "Compiling code and preparing assets..."
+      displayName: 'Build and Compile'
 
-      - name: Simulate Build
-        run: |
-          echo "🔨 Starting Build Process..."
-          echo "Compiling code and preparing assets..."
-          sleep 2
-          echo "Build successful!"
+    - script: |
+        echo "🧪 Running Automated Tests..."
+        echo "Test 1: Login functionality... PASSED"
+        echo "All tests passed (100% success rate)."
+      displayName: 'Run Unit Tests'
 
-      - name: Simulate Unit Tests
-        run: |
-          echo "🧪 Running Automated Tests..."
-          echo "Test 1: Login functionality... PASSED"
-          echo "Test 2: Database connection... PASSED"
-          echo "All tests passed (100% success rate)."
-
-  # PHASE 2: Continuous Deployment (The "Release")
-  Deploy:
-    runs-on: ubuntu-latest
-    needs: Build-and-Test # This ensures it won't deploy if the tests fail
+- stage: DeployStage
+  displayName: 'Phase 2: Continuous Deployment'
+  dependsOn: BuildStage
+  condition: succeeded()
+  jobs:
+  - job: DeployJob
     steps:
-      - name: Simulate Deployment
-        run: |
-          echo "🚀 Deploying to Production Server..."
-          echo "Transferring files to https://demo-app.com"
-          sleep 3
-          echo "✅ Deployment Complete! The app is now live."
+    - script: |
+        echo "🚀 Deploying to Production Server..."
+        echo "Transferring files to https://demo-app.com"
+        echo "✅ Deployment Complete! The app is now live."
+      displayName: 'Simulate Deployment'
